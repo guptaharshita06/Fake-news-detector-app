@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fake News Detector</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+    }
+
+    /* Navbar */
+    .navbar {
+      padding: 20px 40px;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    /* Center container */
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 85vh;
+    }
+
+    .card {
+      width: 450px;
+      padding: 35px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      font-size: 26px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 110px;
+      border-radius: 12px;
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(to right, #ff512f, #dd2476);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 5px 20px rgba(255, 81, 47, 0.4);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .real {
+      color: #00ffcc;
+    }
+
+    .fake {
+      color: #ff4d6d;
+    }
+
+    .loading {
+      color: #ccc;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="navbar">
+  🧠 Fake News AI
+</div>
+
+<div class="main">
+  <div class="card">
+
+    <h1>Detect Fake News Instantly</h1>
+    <p>Paste any news headline or article and let AI decide</p>
+
+    <textarea id="news" placeholder="Paste your news here..."></textarea>
+
+    <button onclick="checkNews()">Analyze News</button>
+
+    <div id="result"></div>
+
+  </div>
+</div>
+
+<script>
+async function checkNews() {
+  let news = document.getElementById("news").value;
+  let resultElement = document.getElementById("result");
+
+  resultElement.innerHTML = "Analyzing...";
+  resultElement.className = "loading";
+
+  let res = await fetch("http://127.0.0.1:8000/predict", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ text: news })
+  });
+
+  let data = await res.json();
+
+  let resultText = data.result;
+
+  resultElement.innerHTML = resultText;
+
+  if (resultText === "Real News") {
+    resultElement.className = "real";
+  } else {
+    resultElement.className = "fake";
+  }
+}
+</script>
+
+</body>
+</html>
